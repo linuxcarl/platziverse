@@ -1,10 +1,12 @@
 {
-  "name": "platziverse-agent",
+  "name": "platziverse",
   "version": "1.0.0",
   "private": true,
-  "description": "A simple IoT Platform - Agent",
-  "main": "index.js",
+  "description": "A simple IoT Platform - API",
+  "main": "server.js",
   "scripts": {
+    "start": "NODE_ENV=production node server.js",
+    "start-dev": "DEBUG=platziverse:* nodemon server.js",
     "lint": "standard",
     "lint-fix": "standard --fix"
   },
@@ -19,13 +21,7 @@
   },
   "homepage": "https://github.com/linuxcarl/platziverse#readme",
   "devDependencies": {
+    "nodemon": "^2.0.4",
     "standard": "^14.3.4"
-  },
-  "dependencies": {
-    "debug": "^4.1.1",
-    "defaults": "^1.0.3",
-    "mqtt": "^4.0.1",
-    "platziverse-utils": "file:../platziverse-utils",
-    "uuid": "^8.0.0"
   }
 }
