@@ -11,13 +11,14 @@ const { parsePayload } = require('./utils')
 const backend = {
   type: 'redis',
   redis,
-  return_buffers: true // con esto la información viene binaria y la podra procesar mucho mas facil!
+  return_buffers: true
 }
 
 const settings = {
   port: 1883,
   backend
 }
+
 const config = {
   database: process.env.DB_NAME || 'platziverse',
   username: process.env.DB_USER || 'platzi',
@@ -36,11 +37,13 @@ server.on('clientConnected', (client) => {
   debug(`Client Connected: ${client.id}`)
   clients.set(client.id, null)
 })
+
 server.on('clientDisconnected', async (client) => {
   debug(`Client Disconnected: ${client.id}`)
-  const agent = await clients.get(client.id)
+  const agent = clients.get(client.id)
+
   if (agent) {
-    // Mark agent as disconnected
+    // Mark Agent as Disconnected
     agent.connected = false
 
     try {
@@ -49,8 +52,9 @@ server.on('clientDisconnected', async (client) => {
       return handleError(e)
     }
 
-    // Delete Agent from clients list
+    // Delete Agent from Clients List
     clients.delete(client.id)
+
     server.publish({
       topic: 'agent/disconnected',
       payload: JSON.stringify({
@@ -59,7 +63,9 @@ server.on('clientDisconnected', async (client) => {
         }
       })
     })
-    debug(`Client (${client.id}) associated to Agent (${agent.uuid}) marked as disconnected`)
+    debug(
+      `Client (${client.id}) associated to Agent (${agent.uuid}) marked as disconnected`
+    )
   }
 })
 
@@ -73,6 +79,7 @@ server.on('published', async (packet, client) => {
       break
     case 'agent/message':
       debug(`Payload: ${packet.payload}`)
+
       const payload = parsePayload(packet.payload)
 
       if (payload) {
@@ -81,48 +88,48 @@ server.on('published', async (packet, client) => {
         let agent
         try {
           agent = await Agent.createOrUpdate(payload.agent)
-          debug(`Agent ${agent.uuid} saved`)
-
-          // Notify agent is connected
-          if (!clients.get(client.id)) {
-            clients.set(client.id, agent)
-            server.publish({
-              topic: 'agent/connected',
-              payload: JSON.stringify({
-                agent: {
-                  uuid: agent.uuid,
-                  name: agent.name,
-                  hostname: agent.hostname,
-                  pid: agent.pid,
-                  connected: agent.connected
-
-                }
-              })
-
-            })
-          }
         } catch (e) {
           return handleError(e)
         }
 
-        // Store Metrics
-        for (const metric of payload.metrics) {
-          let m
+        debug(`Agent ${agent.uuid} saved`)
 
-          try {
-            m = await Metric.create(agent.uuid, metric)
-          } catch (e) {
-            return handleFatalError(e)
-          }
-          debug(`Metric ${m.id} saved on agent ${agent.uuid}`)
+        // Notify Agent is Connected
+        if (!clients.get(client.id)) {
+          clients.set(client.id, agent)
+          server.publish({
+            topic: 'agent/connected',
+            payload: JSON.stringify({
+              agent: {
+                uuid: agent.uuid,
+                name: agent.name,
+                hostname: agent.hostname,
+                pid: agent.pid,
+                connected: agent.connected
+              }
+            })
+          })
         }
+        // Store Metrics
+        let result
+        try {
+          const promises = payload.metrics.map((m) =>
+            Metric.create(agent.uuid, m)
+          )
+          result = await Promise.all(promises)
+        } catch (error) {
+          handleFatalError(error)
+        }
+        result.map((r) => {
+          debug(`Metric ${r.id} save on agent ${agent.id}`)
+        })
       }
       break
   }
 })
-
 server.on('ready', async () => {
   const services = await db(config).catch(handleFatalError)
+
   Agent = services.Agent
   Metric = services.Metric
 
@@ -132,12 +139,13 @@ server.on('ready', async () => {
 server.on('error', handleFatalError)
 
 function handleFatalError (err) {
-  console.error(`${chalk.red('[FATAL ERROR]')} ${err.message}`)
+  console.error(`${chalk.red('[fatal error]')} ${err.message}`)
   console.error(err.stack)
   process.exit(1)
 }
+
 function handleError (err) {
-  console.error(`${chalk.red('[ERROR]')} ${err.message}`)
+  console.error(`${chalk.red('[error]')} ${err.message}`)
   console.error(err.stack)
 }
 
