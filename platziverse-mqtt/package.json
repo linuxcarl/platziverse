@@ -7,7 +7,8 @@
   "scripts": {
     "start": "NODE_ENV=production node server.js",
     "start-dev": "DEBUG=platziverse:* nodemon server.js",
-    "lint": "standard"
+    "lint": "standard",
+    "lint-fix": "standard --fix"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,10 @@
     "chalk": "^4.0.0",
     "debug": "^4.1.1",
     "mosca": "^2.8.3",
+    "platziverse-db": "file:../platziverse-db",
     "redis": "^3.0.2"
+  },
+  "devDependencies": {
+    "standard": "^14.3.4"
   }
 }
