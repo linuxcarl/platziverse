@@ -1,0 +1,19 @@
+{
+  "name": "platziverse-utils",
+  "version": "1.0.0",
+  "description": "Utils for project Iot Platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linuxcarl/platziverse.git"
+  },
+  "author": "Carlos Enrique Ramírez Flores",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/linuxcarl/platziverse/issues"
+  },
+  "homepage": "https://github.com/linuxcarl/platziverse#readme"
+}
