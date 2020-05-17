@@ -9,7 +9,8 @@ const prompt = inquirer.createPromptModule()
 
 const args = process.argv.slice();
 async function setup () {
-  if(!args.includes( '-y') && !args.includes( '--yes' )){
+  console.log(args)
+  if(!args.includes('-y') && !args.includes('--yes')){
     const answer = await prompt([
       {
         type: 'confirm',
@@ -20,6 +21,8 @@ async function setup () {
     if (!answer.setup) {
       return console.log('Nothing happened :)')
     }
+  }else{
+    return console.log('...')
   }
 
   const config = {

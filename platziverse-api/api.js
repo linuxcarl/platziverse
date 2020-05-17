@@ -1,16 +1,28 @@
 'use strict'
 
-const debug = require('debug')
+const debug = require('debug')('platziverse:api:routes')
 const express = require('express')
+const asyncify = require('express-asyncify')
 const db = require('platziverse-db')
-const {config} = require('platziverse-utils')
+const { config } = require('platziverse-utils')
 
-const api = express.Router()
+const api = asyncify(express.Router())
 
-let services, Agent, metrics
+let services, Agent, Metric
 
-api.use('*',(req, res, next) => {
+api.use('*', async (req, res, next) => {
+  if (!services) {
+    debug('Connecting to database')
+    try {
+      services = await db(config.db)
+    } catch (e) {
+      return next(e)
+    }
 
+    Agent = services.Agent
+    Metric = services.Metric
+  }
+  next()
 })
 
 api.get('/agents', (req, res) => {
@@ -20,8 +32,8 @@ api.get('/agents', (req, res) => {
 api.get('/agent/:uuid', (req, res, next) => {
   const { uuid } = req.params
 
-  if (uuid !== 'yyy'){
-      return next(new Error('Agent no found'))
+  if (uuid !== 'yyy') {
+    return next(new Error('Agent no found'))
   }
   res.send({ uuid })
 })

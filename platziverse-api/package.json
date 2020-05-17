@@ -30,8 +30,9 @@
     "chalk": "^4.0.0",
     "debug": "^4.1.1",
     "express": "^4.17.1",
-    "supertest": "^4.0.2",
+    "express-asyncify": "^1.0.1",
+    "platziverse-db": "file:../platziverse-db",
     "platziverse-utils": "file:../platziverse-utils",
-    "platziverse-db": "file:../platziverse-db"
+    "supertest": "^4.0.2"
   }
 }
