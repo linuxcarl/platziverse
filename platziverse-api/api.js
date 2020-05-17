@@ -2,8 +2,16 @@
 
 const debug = require('debug')
 const express = require('express')
+const db = require('platziverse-db')
+const {config} = require('platziverse-utils')
 
 const api = express.Router()
+
+let services, Agent, metrics
+
+api.use('*',(req, res, next) => {
+
+})
 
 api.get('/agents', (req, res) => {
   res.send({})
