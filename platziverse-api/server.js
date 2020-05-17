@@ -27,10 +27,12 @@ function handleFatalError(err){
     console.error(err.message)
     process.exit(1)
 }
-
-process.on('uncaughtException', handleFatalError)
-process.on('unhandledRejection', handleFatalError)
-
-server.listen(port, () => {
-  console.log(`${chalk.green('[Platziverse-api]')} server listening on port ${port}`)
-})
+if(!module.parent){
+    process.on('uncaughtException', handleFatalError)
+    process.on('unhandledRejection', handleFatalError)
+    
+    server.listen(port, () => {
+      console.log(`${chalk.green('[Platziverse-api]')} server listening on port ${port}`)
+    })
+}
+module.exports = server     

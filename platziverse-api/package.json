@@ -5,6 +5,7 @@
   "description": "A simple IoT Platform - API",
   "main": "server.js",
   "scripts": {
+    "test": "DEBUG=platziverse:* ava tests/* --verbose",
     "start": "NODE_ENV=production node server.js",
     "start-dev": "DEBUG=platziverse:* nodemon server.js",
     "lint": "standard",
@@ -25,8 +26,12 @@
     "standard": "^14.3.4"
   },
   "dependencies": {
+    "ava": "^3.8.2",
     "chalk": "^4.0.0",
     "debug": "^4.1.1",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "supertest": "^4.0.2",
+    "platziverse-utils": "file:../platziverse-utils",
+    "platziverse-db": "file:../platziverse-db"
   }
 }
