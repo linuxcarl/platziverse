@@ -19,5 +19,12 @@
   "homepage": "https://github.com/linuxcarl/platziverse#readme",
   "devDependencies": {
     "standard": "^14.3.4"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "defaults": "^1.0.3",
+    "mqtt": "^4.0.1",
+    "platziverse-utils": "file:../platziverse-utils",
+    "uuid": "^8.0.0"
   }
 }

@@ -11,6 +11,14 @@ const agent = new PlatziverseAgent({
 
 agent.connect()
 
+//this agent only
+agent.on('connected')
+agent.on('disconnected')
+agent.on('message')
+
+
+agent.on('agent/connected')
+agent.on('agent/disconnected')
 agent.on('agent/message', payload => {
   console.log(payload)
 })
