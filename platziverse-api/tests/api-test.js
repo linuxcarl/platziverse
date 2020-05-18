@@ -1,15 +1,21 @@
 'use strict'
 
 const test = require('ava')
+const util = require('util')
 const request = require('supertest')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')
 const db = require('platziverse-db')
 const { agentFixtures } = require('platziverse-utils')
+const auth = require('../auth')
+const { config } = require('platziverse-utils')
+
+const sign = util.promisify(auth.sign)
 
 let sandbox = null
 let server = null
 let dbStub = null
+let token = null
 let AgentStub = {}
 let MetricStub = {}
 
@@ -25,6 +31,7 @@ test.beforeEach(async () => {
   AgentStub.findConnected = sandbox.stub()
   AgentStub.findConnected.returns(Promise.resolve(agentFixtures.connected))
 
+  token = await sign({admin: true, username:'platzi '}, config.auth.secret)
   const api = proxyquire('../api', {
     'platziverse-db': dbStub
   })
@@ -42,6 +49,7 @@ test.afterEach(() => {
 test.serial.cb('/api/agents', t => {
   request(server)
     .get('/api/agents')// url de la petición
+    .set('Authorization',`Bearer ${token}`)//seteamos el header para enviar el token
     .expect(200)// Código http de respuesta
     .expect('Content-type', /json/)// espero que tenga la palabra json
     .end((err, res) => {

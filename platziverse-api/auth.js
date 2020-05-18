@@ -11,6 +11,6 @@ function verify(token,secret, cb) {
 }
 
 module.exports = {
-    sing,
+    sign,
     verify
 }
