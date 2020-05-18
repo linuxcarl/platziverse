@@ -4,8 +4,8 @@ const debug = require('debug')('platziverse:api:routes')
 const express = require('express')
 const asyncify = require('express-asyncify')
 const db = require('platziverse-db')
+const auth = require('express-jwt')
 const { config } = require('platziverse-utils')
-
 const api = asyncify(express.Router())
 
 let services, Agent, Metric
@@ -24,10 +24,19 @@ api.use('*', async (req, res, next) => {
   next()
 })
 
-api.get('/agents', async (req, res, next) => {
+api.get('/agents', auth(config.auth) , async (req, res, next) => {
+
+  const {user} = req
+  if(!user || !user.username){
+    return next(new Error('Not authorized'))
+  }
+
   let agents = []
   try {
-    agents = await Agent.findConnected()
+    if(user.admin)
+      agents = await Agent.findConnected()
+    else
+      agents = await Agent.findByUsername(user.username)
   } catch (e) {
     return next(e)
   }

@@ -33,6 +33,8 @@
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "express-asyncify": "^1.0.1",
+    "express-jwt": "^5.3.3",
+    "jsonwebtoken": "^8.5.1",
     "platziverse-db": "file:../platziverse-db",
     "platziverse-utils": "file:../platziverse-utils",
     "supertest": "^4.0.2"
