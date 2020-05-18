@@ -1,5 +1,5 @@
 'use strict'
-
+const chalk = require('chalk')
 function parsePayload (payload) {
   if (payload instanceof Buffer) {
     payload = payload.toString('utf8')
@@ -26,7 +26,14 @@ function pipe (source, target) {
     return source
   }
 }
+function handleFatalError (err) {
+  console.error(`${chalk.red('[FATAL ERROR]')} ${err.message}`)
+  console.error(err.message)
+  process.exit(1)
+}
+
 module.exports = {
   parsePayload,
-  pipe
+  pipe,
+  handleFatalError
 }
