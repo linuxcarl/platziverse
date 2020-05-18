@@ -12,7 +12,7 @@ const port = process.env.PORT || 8080
 const app = express()
 const server = http.createServer(app)
 const io = soketio(server)
-const agent = new platziverseAgent()
+const agent = new PlatziverseAgent()
 
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -21,11 +21,14 @@ io.on('connect', socket =>{
     debug(`Connected ${socket.id}`)
 
     socket.on('agent/message', payload =>{
-        console.log(payload)
+        socket.emit('agent/message', payload)
     })
-    setInterval(() => {
-        socket.emit('agent/message',{agent:'Que onda browser! se va hacer o no se va hacer!'})
-    }, 4000);
+    socket.on('agent/connected', payload =>{
+        socket.emit('agent/connected', payload)
+    })
+    socket.on('agent/disconnected', payload =>{
+        socket.emit('agent/disconnected', payload)
+    })
 })
 
 

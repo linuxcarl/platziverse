@@ -12,11 +12,17 @@
         var socket = io()
 
         socket.on('agent/message',function(payload) {
-            console.log(payload)
+            console.log('agent/message',payload)
         })
-        setInterval(function(){
-            socket.emit('agent/message','Que pedo! server. Se tiene que hacer ESA CARNITA ASADA!')
-        },5000)
+
+        socket.on('agent/connected',function(payload) {
+            console.log('agent/connected',payload)
+        })
+
+        socket.on('agent/disconnected',function(payload) {
+            console.log('agent/disconnected',payload)
+        })
+        
     </script>
 </body>
 </html>
