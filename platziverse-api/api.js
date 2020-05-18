@@ -5,6 +5,7 @@ const express = require('express')
 const asyncify = require('express-asyncify')
 const db = require('platziverse-db')
 const auth = require('express-jwt')
+const guard = require('express-jwt-permissions')()
 const { config } = require('platziverse-utils')
 const api = asyncify(express.Router())
 
@@ -60,7 +61,19 @@ api.get('/agent/:uuid', async (req, res, next) => {
   res.send(agent)
 })
 
-api.get('/metrics/:uuid', async (req, res, next) => {
+/** 
+ * exmpla de payload de token
+ * https://jwt.io/
+ * {
+    "permissions":[
+        "metrics:read"
+    ],
+    "username": "CARLOS",
+    "admin": true,
+    "name":"carlos" 
+  }
+*/
+api.get('/metrics/:uuid', auth(config.auth), guard.check('metrics:read'), async (req, res, next) => {
   const { uuid } = req.params
 
   debug(`request to /metrics/${uuid}`)

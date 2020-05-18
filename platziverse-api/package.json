@@ -34,6 +34,7 @@
     "express": "^4.17.1",
     "express-asyncify": "^1.0.1",
     "express-jwt": "^5.3.3",
+    "express-jwt-permissions": "^1.3.3",
     "jsonwebtoken": "^8.5.1",
     "platziverse-db": "file:../platziverse-db",
     "platziverse-utils": "file:../platziverse-utils",
