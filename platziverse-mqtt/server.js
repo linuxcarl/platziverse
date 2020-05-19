@@ -133,7 +133,7 @@ server.on('ready', async () => {
   Agent = services.Agent
   Metric = services.Metric
 
-  console.log(`${chalk.green('[platziverse-mqtt]')} server is running`)
+  console.log(`${chalk.green('[platziverse-mqtt]')} server is running in the port ${settings.port}`)
 })
 
 server.on('error', handleFatalError)

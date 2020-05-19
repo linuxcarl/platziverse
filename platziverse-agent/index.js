@@ -13,7 +13,7 @@ const options = {
     username: 'platzi',
     interval: 1000,
     mqtt: {
-      host: 'mqtt://localhost'
+      host: 'mqtt://localhost:1813'
     }
   }
   
