@@ -3,31 +3,23 @@
 const debug = require('debug')('platziverse:web')
 const http = require('http')
 const path = require('path')
-const soketio = require('socket.io')
 const express = require('express')
-const proxy = require('./proxy')
-const chalk = require('chalk')
 const asyncify = require('express-asyncify')
-
+const socketio = require('socket.io')
+const chalk = require('chalk')
 const PlatziverseAgent = require('platziverse-agent')
-const { pipe, handleFatalError } = require('platziverse-utils')
+
+const proxy = require('./proxy')
+const { pipe } = require('platziverse-utils')
 
 const port = process.env.PORT || 8099
 const app = asyncify(express())
 const server = http.createServer(app)
-const io = soketio(server)
+const io = socketio(server)
 const agent = new PlatziverseAgent()
 
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/', proxy)
-// Express error handler
-app.use((err, req, res, next) => {
-  debug(`Error: ${err.message}`)
-  if (err.message.match(/not found/)) {
-    return res.status(404).send({ error: err.message })
-  }
-  res.status(500).send({ error: err.message })
-})
 
 // Socket.io / WebSockets
 io.on('connect', socket => {
@@ -36,14 +28,27 @@ io.on('connect', socket => {
   pipe(agent, socket)
 })
 
+// Express Error Handler
+app.use((err, req, res, next) => {
+  debug(`Error: ${err.message}`)
 
+  if (err.message.match(/not found/)) {
+    return res.status(404).send({ error: err.message })
+  }
+
+  res.status(500).send({ error: err.message })
+})
+
+function handleFatalError (err) {
+  console.error(`${chalk.red('[fatal error]')} ${err.message}`)
+  console.error(err.stack)
+  process.exit(1)
+}
 
 process.on('uncaughtException', handleFatalError)
 process.on('unhandledRejection', handleFatalError)
 
 server.listen(port, () => {
-  console.log(
-    `${chalk.green('[PlatziVerse-web]')} server listening on http://localhost:${port}`
-  )
+  console.log(`${chalk.green('[platziverse-web]')} server listening on port ${port}`)
   agent.connect()
 })

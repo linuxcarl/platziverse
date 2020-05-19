@@ -1,5 +1,6 @@
 <template>
   <div>
+    <agent uuid="9342d110-2f4e-4600-99a2-332ddbe3fdee" :socket="socket"></agent>
     <agent
       v-for="agent in agents"
       :uuid="agent.uuid"
@@ -20,6 +21,7 @@
 </style>
 
 <script>
+const request = require('request-promise-native')
 const io = require('socket.io-client')
 const socket = io()
 
@@ -37,7 +39,29 @@ module.exports = {
   },
 
   methods: {
-    initialize () {
+    async initialize () {
+      const options = {
+        method: 'GET',
+        url: 'http://locahost:8099/agents',
+        json: true
+      }
+
+      let result
+      try{
+        result = await request(options)
+      }catch(e){
+        this.error = e.error.error
+      }
+      this.agents = result
+
+      socket.on('agent/connected', payload => {
+        const {uuid} = payload.agent
+        const existing = this.agents.find(a => a.uuid === uuid)
+        if(!existing){
+          this.agents.push(payload.agent)
+        }
+      })
+
     }
   }
 }
