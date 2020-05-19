@@ -1,0 +1,24 @@
+{
+  "name": "platziverse-cli",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A simple platform IoT -CLI",
+  "bin": "platziverse.js",
+  "scripts": {
+    "lint": "standard",
+    "lint-fix": "standard --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linuxcarl/platziverse.git"
+  },
+  "author": "Carlos Enrique Ramírez Flores",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/linuxcarl/platziverse/issues"
+  },
+  "homepage": "https://github.com/linuxcarl/platziverse#readme",
+  "devDependencies": {
+    "standard": "^14.3.4"
+  }
+}
