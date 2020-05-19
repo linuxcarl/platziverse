@@ -3,7 +3,9 @@
     <agent
       v-for="agent in agents"
       :uuid="agent.uuid"
-      :key="agent.uuid">
+      :key="agent.uuid"
+      :socket="socket"
+      >
     </agent>
     <p v-if="error">{{error}}</p>
   </div>
@@ -18,12 +20,15 @@
 </style>
 
 <script>
+const io = require('socket.io-client')
+const socket = io()
 
 module.exports = {
   data () {
     return {
       agents: [],
-      error: null
+      error: null,
+      socket
     }
   },
 

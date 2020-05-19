@@ -8,7 +8,7 @@ const asyncify = require('express-asyncify')
 
 const api = require('./api')
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3001
 const app = asyncify(express())
 const server = http.createServer(app)
 
