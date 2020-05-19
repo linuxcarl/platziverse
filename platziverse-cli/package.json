@@ -20,5 +20,10 @@
   "homepage": "https://github.com/linuxcarl/platziverse#readme",
   "devDependencies": {
     "standard": "^14.3.4"
+  },
+  "dependencies": {
+    "blessed": "^0.1.81",
+    "blessed-contrib": "^4.8.20",
+    "minimist": "^1.2.5"
   }
 }
