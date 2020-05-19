@@ -7,10 +7,14 @@
 
 const blessed = require('blessed')
 const contrib = require('blessed-contrib')
+const PlatziverseAgent = require('platziverse-agent')
 
 // console.log(process.argv)//muestra los argumentos enviados y las rutas de ejecion del script
 
+const agent = new PlatziverseAgent()
 const screen = blessed.screen()
+const agents = new Map()
+const agentMetrics = new Map()
 
 // componente del grid
 const grid = new contrib.grid({
@@ -29,8 +33,44 @@ const line = grid.set(0, 1, 1, 3, contrib.line, {
   minY: 0,
   xPadding: 5
 })
+
+function renderData(){
+    const treeData = {}
+    for(let [uuid, val] of agents){
+        const title = `${val.name} -(${val.pid})`
+        treeData[title] ={
+            uuid,
+            agent: true,
+            children:{}
+        }
+    }
+    tree.setData({
+        extended: true,
+        children: treeData
+    })
+    screen.render()
+}
+agent.on('agent/disconnected', payload =>{
+    const {uuid} = payload.agent
+
+    if(agents.has(uuid)){
+        agents.delete(uuid)
+        agentMetrics.delete(uuid)
+    }
+    renderData()
+})
+agent.on('agent/connected', payload => {
+    const { uuid } = payload.agent
+    if(!agents.has(uuid)){
+        agents.set(uuid, payload.agent)
+        agentMetrics.set(uuid,{})
+    }
+    renderData()
+})
+
 // definir combinacion de teclas
 screen.key(['escape', 'q', 'C-c'], (ch, key) => {
   process.exit(0)
 })
+agent.connect()
 screen.render()
