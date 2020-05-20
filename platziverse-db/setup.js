@@ -1,5 +1,6 @@
 'use strict'
 if (process.env.NODE_ENV !== 'production') require('longjohn')
+const minimist = require('minimist')
 const debug = require('debug')('platziverse:db:setup')
 const inquirer = require('inquirer')
 const chalk = require('chalk')
@@ -7,9 +8,9 @@ const db = require('./')
 
 const prompt = inquirer.createPromptModule()
 
-const args = process.argv.slice()
+const args = minimist(process.argv.slice())
 async function setup () {
-  if (!args.includes('-y') && !args.includes('--yes')) {
+  if (!args.yes) {
     const answer = await prompt([
       {
         type: 'confirm',
