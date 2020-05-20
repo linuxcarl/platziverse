@@ -4,7 +4,7 @@
 'use strict'
 
 /* eslint new-cap: "off" */
-
+if (process.env.NODE_ENV !== 'production') require('longjohn')
 const blessed = require('blessed')
 const contrib = require('blessed-contrib')
 

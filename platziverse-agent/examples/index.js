@@ -1,4 +1,5 @@
-
+'use strict'
+if (process.env.NODE_ENV !== 'production') require('longjohn')
 const PlatziverseAgent = require('../')
 
 const agent = new PlatziverseAgent({

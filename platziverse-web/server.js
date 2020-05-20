@@ -1,5 +1,5 @@
 'use strict'
-
+if (process.env.NODE_ENV !== 'production') require('longjohn')
 const debug = require('debug')('platziverse:web')
 const http = require('http')
 const path = require('path')

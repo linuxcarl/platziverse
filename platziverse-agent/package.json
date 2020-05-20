@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/linuxcarl/platziverse#readme",
   "devDependencies": {
+    "longjohn": "^0.2.12",
     "standard": "^14.3.4"
   },
   "dependencies": {

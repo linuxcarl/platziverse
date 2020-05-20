@@ -1,5 +1,5 @@
 'use strict'
-
+if (process.env.NODE_ENV !== 'production') require('longjohn')
 const debug = require('debug')('platziverse:db:setup')
 const inquirer = require('inquirer')
 const chalk = require('chalk')
@@ -7,10 +7,9 @@ const db = require('./')
 
 const prompt = inquirer.createPromptModule()
 
-const args = process.argv.slice();
+const args = process.argv.slice()
 async function setup () {
-  console.log(args)
-  if(!args.includes('-y') && !args.includes('--yes')){
+  if (!args.includes('-y') && !args.includes('--yes')) {
     const answer = await prompt([
       {
         type: 'confirm',
@@ -21,8 +20,8 @@ async function setup () {
     if (!answer.setup) {
       return console.log('Nothing happened :)')
     }
-  }else{
-    return console.log('...')
+  } else {
+    console.log('_.:::: CREADO DB ::::._')
   }
 
   const config = {

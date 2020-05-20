@@ -1,5 +1,5 @@
 'use strict'
-
+if (process.env.NODE_ENV !== 'production') require('longjohn')
 const debug = require('debug')('platziverse:mqtt')
 const mosca = require('mosca')
 const redis = require('redis')

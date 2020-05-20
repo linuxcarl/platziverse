@@ -18,5 +18,8 @@
   "homepage": "https://github.com/linuxcarl/platziverse#readme",
   "dependencies": {
     "chalk": "^4.0.0"
+  },
+  "devDependencies": {
+    "longjohn": "^0.2.12"
   }
 }
