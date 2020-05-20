@@ -7,26 +7,31 @@
 
 const blessed = require('blessed')
 const contrib = require('blessed-contrib')
-const PlatziverseAgent = require('platziverse-agent')
+
 const moment = require('moment')
-// console.log(process.argv)//muestra los argumentos enviados y las rutas de ejecion del script
+const PlatziverseAgent = require('platziverse-agent')
 
 const agent = new PlatziverseAgent()
 const screen = blessed.screen()
+
 const agents = new Map()
 const agentMetrics = new Map()
+let extended = []
+let selected = {
+  uuid: null,
+  type: null
+}
 
-// componente del grid
 const grid = new contrib.grid({
   rows: 1,
   cols: 4,
   screen
 })
-// componente arbol
+
 const tree = grid.set(0, 0, 1, 1, contrib.tree, {
   label: 'Connected Agents'
 })
-// component de la linea
+
 const line = grid.set(0, 1, 1, 3, contrib.line, {
   label: 'Metric',
   showLegend: true,
@@ -34,85 +39,132 @@ const line = grid.set(0, 1, 1, 3, contrib.line, {
   xPadding: 5
 })
 
-agent.on('agent/message', payload =>{
-    const {uuid} = payload.agent
-    const {timestamp} = payload
+agent.on('agent/connected', payload => {
+  const { uuid } = payload.agent
 
-    if(!agents.has('uuid')){
-        agents.set(uuid, payload.agent)
-        agentMetrics.set(uuid, {})
-    }
-    const metrics = agentMetrics.get(uuid)
+  if (!agents.has(uuid)) {
+    agents.set(uuid, payload.agent)
+    agentMetrics.set(uuid, {})
+  }
 
-    payload.metrics.forEach(m => {
-        const {type, value} = m
-
-        if(!Array.isArray(metrics[type])){
-            metrics[type] = []
-        }
-
-        const length = metrics[type].length
-        if(length>=20){
-              metrics[type].shift()
-        }
-        metrics[type].push({
-            value,
-            timestamp: moment(timestamp).format('HH:mm:ss')
-        })
-    });
-    renderData()
+  renderData()
 })
-function renderData(){
-    const treeData = {}
-    for(let [uuid, val] of agents){
-        const title = `${val.name} -(${val.pid})`
-        treeData[title] ={
-            uuid,
-            agent: true,
-            children:{}
-        }
 
-        const metrics = agentMetrics.get(uuid)
-        Object.keys(metrics).forEach(type=>{
-            const metric ={
-                uuid,
-                type,
-                metric: true
-            }
-            const metricName = `${type}`
-            treeData[title].children[metricName] = metric
-        })
+agent.on('agent/disconnected', payload => {
+  const { uuid } = payload.agent
+
+  if (agents.has(uuid)) {
+    agents.delete(uuid)
+    agentMetrics.delete(uuid)
+  }
+
+  renderData()
+})
+
+agent.on('agent/message', payload => {
+  const { uuid } = payload.agent
+  const { timestamp } = payload
+
+  if (!agents.has(uuid)) {
+    agents.set(uuid, payload.agent)
+    agentMetrics.set(uuid, {})
+  }
+
+  const metrics = agentMetrics.get(uuid)
+
+  payload.metrics.forEach(m => {
+    const { type, value } = m
+
+    if (!Array.isArray(metrics[type])) {
+      metrics[type] = []
     }
-    tree.setData({
-        extended: true,
-        children: treeData
+
+    const length = metrics[type].length
+    if (length >= 20) {
+      metrics[type].shift()
+    }
+
+    metrics[type].push({
+      value,
+      timestamp: moment(timestamp).format('HH:mm:ss')
     })
-    screen.render()
+  })
+
+  renderData()
+})
+
+tree.on('select', node => {
+  const { uuid } = node
+
+  if (node.agent) {
+    node.extended ? extended.push(uuid) : extended = extended.filter(e => e !== uuid)
+    selected.uuid = null
+    selected.type = null
+    return
+  }
+
+  selected.uuid = uuid
+  selected.type = node.type
+
+  renderMetric()
+})
+
+function renderData () {
+  const treeData = {}
+  let idx = 0
+  for (let [ uuid, val ] of agents) {
+    const title = ` ${val.name} - (${val.pid})`
+    treeData[title] = {
+      uuid,
+      agent: true,
+      extended: extended.includes(uuid),
+      children: {}
+    }
+
+    const metrics = agentMetrics.get(uuid)
+    Object.keys(metrics).forEach(type => {
+      const metric = {
+        uuid,
+        type,
+        metric: true
+      }
+
+      const metricName = ` ${type} ${' '.repeat(1000)} ${idx++}`
+      treeData[title].children[metricName] = metric
+    })
+  }
+
+  tree.setData({
+    extended: true,
+    children: treeData
+  })
+
+  renderMetric()
 }
 
+function renderMetric () {
+  if (!selected.uuid && !selected.type) {
+    line.setData([{ x: [], y: [], title: '' }])
+    screen.render()
+    return
+  }
 
-agent.on('agent/disconnected', payload =>{
-    const {uuid} = payload.agent
+  const metrics = agentMetrics.get(selected.uuid)
+  const values = metrics[selected.type]
+  const series = [{
+    title: selected.type,
+    x: values.map(v => v.timestamp).slice(-10),
+    y: values.map(v => v.value).slice(-10)
+  }]
 
-    if(agents.has(uuid)){
-        agents.delete(uuid)
-        agentMetrics.delete(uuid)
-    }
-    renderData()
-})
-agent.on('agent/connected', payload => {
-    const { uuid } = payload.agent
-    if(!agents.has(uuid)){
-        agents.set(uuid, payload.agent)
-        agentMetrics.set(uuid,{})
-    }
-    renderData()
-})
+  line.setData(series)
+  screen.render()
+}
 
-// definir combinacion de teclas
-screen.key(['escape', 'q', 'C-c'], (ch, key) => {
+screen.key([ 'escape', 'q', 'C-c' ], (ch, key) => {
   process.exit(0)
 })
+
 agent.connect()
 tree.focus()
 screen.render()
