@@ -25,7 +25,7 @@
     "debug": "^4.1.1",
     "mosca": "^2.8.3",
     "platziverse-db": "file:../platziverse-db",
-    "redis": "^3.0.2"
+    "redis": "^3.1.1"
   },
   "devDependencies": {
     "longjohn": "^0.2.12",
