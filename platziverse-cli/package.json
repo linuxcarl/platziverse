@@ -25,7 +25,7 @@
   "dependencies": {
     "blessed": "^0.1.81",
     "blessed-contrib": "^4.8.20",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.6",
     "moment": "^2.25.3",
     "platziverse-agent": "file:../platziverse-agent",
     "platziverse-utils": "file:../platziverse-utils"
