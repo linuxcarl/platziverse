@@ -12,7 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "ava": "^3.8.2",
+    "ava": "^5.2.0",
     "longjohn": "^0.2.12",
     "nyc": "^15.0.1",
     "proxyquire": "^2.1.3",
