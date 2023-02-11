@@ -30,7 +30,7 @@
     "babelify": "^10.0.0",
     "browserify": "^16.5.1",
     "longjohn": "^0.2.12",
-    "nodemon": "^2.0.4",
+    "nodemon": "^2.0.20",
     "standard": "^14.3.4",
     "uglify-js": "github:mishoo/UglifyJS2#harmony",
     "vueify": "^9.4.1"
